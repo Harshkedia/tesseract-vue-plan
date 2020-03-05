@@ -1,39 +1,43 @@
 <template>
   <div id="app">
     <button v-on:click="recognize">recognize</button>
-    <img id="text-img" alt="Vue logo" src="./assets/testocr.png">
+    <img id="text-img" alt="Vue logo" src="./assets/floor-plan-color.png" />
   </div>
 </template>
 
 <script>
 /* eslint-disable */
-import { createWorker, PSM, OEM } from 'tesseract.js';
+import { createWorker, PSM, OEM } from "tesseract.js";
 const worker = createWorker({
-  logger: m => console.log(m),
+  logger: m => console.log(m)
 });
 
 export default {
-  name: 'app',
+  name: "app",
   methods: {
     recognize: async () => {
-      const img = document.getElementById('text-img');
+      const img = document.getElementById("text-img");
       console.log(img);
       await worker.load();
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng', OEM.LSTM_ONLY);
+      await worker.loadLanguage("eng");
+      await worker.initialize("eng", OEM.LSTM_ONLY);
       await worker.setParameters({
-        tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
+        tessedit_pageseg_mode: PSM.SINGLE_BLOCK
       });
-      const { data: { text } } = await worker.recognize(img);
-      console.log(text);
+      const {
+        data: { words }
+      } = await worker.recognize(img);
+      words.map(word => {
+        console.log(word.text, word.bbox);
+      });
     }
   }
-}
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
